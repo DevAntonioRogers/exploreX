@@ -1,5 +1,5 @@
 interface tagProps {
-  text: string[];
+  text: string;
 }
 const Tag = ({ text }: tagProps) => {
   return (

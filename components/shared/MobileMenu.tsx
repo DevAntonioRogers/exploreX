@@ -12,8 +12,16 @@ import { navLinks } from "@/constants";
 import Link from "next/link";
 import Route from "../ui/Route";
 import useMenuActive from "@/hooks/useMenuActive";
+import { User } from "@prisma/client";
+import { signOut } from "next-auth/react";
 
-const MobileMenu = () => {
+interface MobileMenuProps {
+  user: User;
+}
+
+const MobileMenu: React.FC<MobileMenuProps> = ({
+  user,
+}) => {
   const [openMobileMenu, setOpenMobileMenu] =
     useState(false);
 
@@ -42,7 +50,7 @@ const MobileMenu = () => {
             onClick={(e) => e.stopPropagation()}
             className="absolute h-screen left-0 top-0 w-60 bg-white z-[999] px-5 border-r overflow-y-hidden flex flex-col gap-10"
           >
-            <div className="border-b py-5">
+            <div className="border-b py-5 text-center">
               <Link href={"/"}>
                 <h1 className="text-3xl font-extrabold text-secondary">
                   Explore
@@ -58,7 +66,7 @@ const MobileMenu = () => {
               </div>
             </div>
 
-            <ul className="flex items-center justify-center gap-10 flex-col mt-5 flex-1 py-5 border-b">
+            <ul className="flex items-center justify-center gap-5 flex-col mt-5  py-10 border-b">
               {navLinks.map((link, index) => {
                 const isActive = useMenuActive(link.route);
 
@@ -77,18 +85,43 @@ const MobileMenu = () => {
               })}
             </ul>
 
-            <div className="flex gap-5 flex-1 flex-col py-5">
-              <Button
-                text="Log In"
-                onClick={() => null}
-                aria="Log in button"
-              />
-              <Button
-                text="Sign Up"
-                onClick={() => null}
-                aria="Sign up button"
-              />
-            </div>
+            {!user && (
+              <div className="flex gap-5 flex-1 flex-col py-5">
+                <Button
+                  text="Log In"
+                  onClick={() => null}
+                  aria="Log in button"
+                />
+                <Button
+                  text="Sign Up"
+                  onClick={() => null}
+                  aria="Sign up button"
+                />
+              </div>
+            )}
+
+            {user && (
+              <div>
+                <ul className="flex flex-col  gap-5 items-center">
+                  <Link
+                    href="/create"
+                    onClick={() => setOpenMobileMenu(false)}
+                  >
+                    <li>Create a Post</li>
+                  </Link>
+                  <Link
+                    href="/userposts"
+                    onClick={() => setOpenMobileMenu(false)}
+                  >
+                    <li>My Post</li>
+                  </Link>
+
+                  <li onClick={() => signOut()}>
+                    Sign Out
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       ) : null}
